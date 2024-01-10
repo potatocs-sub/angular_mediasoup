@@ -109,9 +109,7 @@ export class AppComponent {
             // 초기 연결 설정 producer , consumer 연결 transport 
             await this.initTransports(device)
 
-            await this.socket.emit('getProducers')
-            this.initSockets()
-            this._isOpen = true
+
           })
         })
       })
@@ -257,6 +255,12 @@ export class AppComponent {
             }
           }
         )
+
+
+        // 받을 준비가 되면 getProducers 시전
+        await this.socket.emit('getProducers')
+        this.initSockets()
+        this._isOpen = true
       })
     }
   }
@@ -343,6 +347,7 @@ export class AppComponent {
     const { rtpCapabilities } = this.device;
     console.log(rtpCapabilities)
     return new Promise(async (resolve, reject) => {
+      console.log(this.consumerTransport)
       await this.socket.emit("consume", {
         rtpCapabilities,
         consumerTransportId: this.consumerTransport.id,
@@ -541,7 +546,7 @@ export class AppComponent {
         }
       }
 
-      console.log(await this.producerTransport.produce(params))
+
       let producer = await this.producerTransport.produce(params)
 
       console.log('Producer', producer)
