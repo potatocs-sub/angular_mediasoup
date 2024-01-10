@@ -1,0 +1,25 @@
+<div>
+  <div class="container">
+    <div>
+      <br />
+      <input id="roomIdInput" type="text" value="123" />
+      <input id="nameInput" type="text" value="user" />
+      <button (click)="joinRoom('user', '123')">
+        join
+      </button>
+    </div>
+    <div>
+      <button (click)="produce('videoType','')">video</button>
+    </div>
+  </div>
+
+  <video id="localVideo" width="250"></video>
+  <div #localMedia id="localMedia" class="containers">
+
+  </div>
+  <h1>-------------------------------------</h1>
+  <div class="mediasoup_wrapper">
+    <div #remoteVideos id="remoteVideos" class="containers"></div>
+    <div #remoteAudios id="remoteAudios"></div>
+  </div>
+</div>
