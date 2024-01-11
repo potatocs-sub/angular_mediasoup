@@ -37,12 +37,19 @@ export class AppComponent {
   @ViewChild('audioSelect') audioSelectEl!: ElementRef<HTMLSelectElement>;
   @ViewChild('videoSelect') videoSelectEl!: ElementRef<HTMLSelectElement>;
 
+
+  @ViewChild('roomIdInput') roomIdInputEl!: ElementRef<HTMLInputElement>;
+  @ViewChild('nameInput') nameInputEl!: ElementRef<HTMLInputElement>;
+
   localMediaContainer!: HTMLDivElement;
   remoteVideosContainer!: HTMLDivElement;
   remoteAudiosContainer!: HTMLDivElement;
 
   audioSelect!: HTMLSelectElement;
   videoSelect!: HTMLSelectElement;
+
+  roomIdInput!: HTMLInputElement;
+  nameInput!: HTMLInputElement;
 
   constructor(
     @Inject(PLATFORM_ID) private _platform: Object,
@@ -62,6 +69,9 @@ export class AppComponent {
 
     this.audioSelect = this.audioSelectEl.nativeElement;
     this.videoSelect = this.videoSelectEl.nativeElement;
+
+    this.roomIdInput = this.roomIdInputEl.nativeElement;
+    this.nameInput = this.nameInputEl.nativeElement;
   }
 
 
@@ -104,13 +114,13 @@ export class AppComponent {
   producerLabel = new Map()
 
   // 방 참가 함수
-  async joinRoom(name: string, room_id: string) {
+  async joinRoom() {
+    const name = this.nameInput.value;
+    const room_id = this.roomIdInput.value;
+
     if (this.rc && this.rc.isOpen()) {
       console.log('Already connected to a room')
     } else {
-
-
-
       // 방 생성
       await this.socket.emit('createRoom', { room_id }, async (response: any) => {
         // 일단 만들려고 시도
@@ -403,6 +413,23 @@ export class AppComponent {
   // 나가기 함수
   exit(offline = false) {
     // this.socket.emit('exitRoom', ())
+    let clean = () => {
+      this._isOpen = false
+      this.consumerTransport.close();
+      this.producerTransport.close();
+      this.socket.off('disconnect')
+      this.socket.off('newProducers')
+      this.socket.off('consumerClosed')
+    }
+
+    if (!offline) {
+      this.socket
+        .emit('exitRoom', {}, () => {
+          clean()
+        })
+    } else {
+      clean()
+    }
   }
 
 
