@@ -1,5 +1,6 @@
 <div>
   <div class="container">
+    <!-- 여기에 방 이름, 유저 이름 적기 -->
     <div>
       <br />
       <input id="roomIdInput" type="text" value="123" />
@@ -8,8 +9,18 @@
         join
       </button>
     </div>
+
     <div>
-      <button (click)="produce('videoType','')">video</button>
+      <button (click)="produce('videoType')">video</button>
+    </div>
+
+    <!-- 여기에 카메라 정보 들어갈 드롭 다운 생성 -->
+    <div #devicesList id="devicesList">
+      <i>Audio:</i>
+      <select #audioSelect id="audioSelect"></select>
+      <br />
+      <i>Video:</i>
+      <select #videoSelect id="videoSelect" (change)="getLocalStream()"></select>
     </div>
   </div>
 

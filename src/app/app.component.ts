@@ -33,9 +33,16 @@ export class AppComponent {
   @ViewChild('localMedia') localMediaEl!: ElementRef<HTMLDivElement>;
   @ViewChild('remoteVideos') remoteVideosEl!: ElementRef<HTMLDivElement>;
   @ViewChild('remoteAudios') remoteAudiosEl!: ElementRef<HTMLDivElement>;
+
+  @ViewChild('audioSelect') audioSelectEl!: ElementRef<HTMLSelectElement>;
+  @ViewChild('videoSelect') videoSelectEl!: ElementRef<HTMLSelectElement>;
+
   localMediaContainer!: HTMLDivElement;
   remoteVideosContainer!: HTMLDivElement;
   remoteAudiosContainer!: HTMLDivElement;
+
+  audioSelect!: HTMLSelectElement;
+  videoSelect!: HTMLSelectElement;
 
   constructor(
     @Inject(PLATFORM_ID) private _platform: Object,
@@ -44,14 +51,20 @@ export class AppComponent {
 
   ngAfterViewInit(): void {
     this.initializeElements();
-    this.getLocalStream()
+    this.initEnumerateDevices()
+    // this.getLocalStream()
   }
 
   private initializeElements(): void {
     this.localMediaContainer = this.localMediaEl.nativeElement
     this.remoteVideosContainer = this.remoteVideosEl.nativeElement
     this.remoteAudiosContainer = this.remoteAudiosEl.nativeElement
+
+    this.audioSelect = this.audioSelectEl.nativeElement;
+    this.videoSelect = this.videoSelectEl.nativeElement;
   }
+
+
 
   //1. 클라이언트에 연결된 카메라, 오디오 등의 장치 데이터를 받아온다
   getLocalStream = async () => {
@@ -60,14 +73,16 @@ export class AppComponent {
         audio: true,
         video: {
           width: { min: 640, max: 1920 },
-          height: { min: 400, max: 1080 }
-        }
+          height: { min: 400, max: 1080 },
+          deviceId: this.videoSelect.value
+        },
+
       }).then(this.streamSuccess).catch((error) => {
         console.log(error.message)
       })
     }
   }
-  //2. 비디오, 오디오의 stream 정보를 받아서 socket에 joinRoom한다.
+
   streamSuccess = (stream: any) => {
     const localVideo: HTMLVideoElement = document.getElementById('localVideo') as HTMLVideoElement;
     localVideo.srcObject = stream;
@@ -93,7 +108,8 @@ export class AppComponent {
     if (this.rc && this.rc.isOpen()) {
       console.log('Already connected to a room')
     } else {
-      this.initEnumerateDevices()
+
+
 
       // 방 생성
       await this.socket.emit('createRoom', { room_id }, async (response: any) => {
@@ -108,8 +124,6 @@ export class AppComponent {
             this.device = device;
             // 초기 연결 설정 producer , consumer 연결 transport 
             await this.initTransports(device)
-
-
           })
         })
       })
@@ -388,10 +402,11 @@ export class AppComponent {
 
   // 나가기 함수
   exit(offline = false) {
-
+    // this.socket.emit('exitRoom', ())
   }
 
 
+  // 연결 제거 함수
   removeConsumer(consumer_id: any) {
     let elem: any = document.getElementById(consumer_id) as HTMLVideoElement
     const stream = elem.srcObject;
@@ -421,6 +436,7 @@ export class AppComponent {
       navigator.mediaDevices
         .getUserMedia(constraints)
         .then((stream) => {
+
           this.enumerateDevices()
           stream.getTracks().forEach(function (track) {
             track.stop()
@@ -435,13 +451,19 @@ export class AppComponent {
   enumerateDevices() {
     navigator.mediaDevices.enumerateDevices().then((devices: any) => {
       devices.forEach((device: any) => {
-        let el = null
+        let el: any = null
         if ('audioinput' === device.kind) {
-          // el = audioSelect
+          el = this.audioSelect
         } else if ('videoinput' === device.kind) {
-          // el = videoSelect
+          el = this.videoSelect
         }
         if (!el) return
+
+        let option = document.createElement('option');
+        option.value = device.deviceId
+        option.innerText = device.label
+        el.appendChild(option)
+        this.isEnumerateDevices = true
       })
     })
 
@@ -464,6 +486,7 @@ export class AppComponent {
     let screen = false;
     switch (type) {
       case this.mediaType.audio:
+        deviceId = this.audioSelect.value;
         mediaConstraints = {
           audio: {
             deviceId: deviceId
@@ -473,6 +496,7 @@ export class AppComponent {
         audio = true
         break;
       case this.mediaType.video:
+        deviceId = this.videoSelect.value;
         mediaConstraints = {
           audio: false,
           video: {
@@ -508,13 +532,7 @@ export class AppComponent {
     let stream;
 
     try {
-      stream = screen ? await navigator.mediaDevices.getDisplayMedia() : await navigator.mediaDevices.getUserMedia({
-        audio: false,
-        video: {
-          width: { min: 640, max: 1920 },
-          height: { min: 400, max: 1080 }
-        }
-      })
+      stream = screen ? await navigator.mediaDevices.getDisplayMedia() : await navigator.mediaDevices.getUserMedia(mediaConstraints)
       console.log(navigator.mediaDevices.getSupportedConstraints())
 
       const track = audio ? stream.getAudioTracks()[0] : stream.getVideoTracks()[0]
@@ -549,13 +567,11 @@ export class AppComponent {
 
       let producer = await this.producerTransport.produce(params)
 
-      console.log('Producer', producer)
-
       this.producers.set(producer.id, producer)
 
       let elem: any;
       if (!audio) {
-        console.log(stream)
+
         elem = document.createElement('video')
         elem.srcObject = stream
         elem.id = producer.id
@@ -563,8 +579,7 @@ export class AppComponent {
         elem.autoplay = true
         elem.className = 'vid'
 
-        console.log(this
-        )
+
         this.localMediaEl.nativeElement.appendChild(elem)
         this.handleFS(elem.id)
       }
