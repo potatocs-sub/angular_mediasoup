@@ -79,24 +79,24 @@ export class AppComponent {
   //1. 클라이언트에 연결된 카메라, 오디오 등의 장치 데이터를 받아온다
   getLocalStream = async () => {
     if (isPlatformBrowser(this._platform) && 'mediaDevices' in navigator) {
-      await navigator.mediaDevices.getUserMedia({
-        audio: true,
-        video: {
-          width: { min: 640, max: 1920 },
-          height: { min: 400, max: 1080 },
-          deviceId: this.videoSelect.value
-        },
+      // await navigator.mediaDevices.getUserMedia({
+      //   audio: true,
+      //   video: {
+      //     width: { min: 640, max: 1920 },
+      //     height: { min: 400, max: 1080 },
+      //     deviceId: this.videoSelect.value
+      //   },
 
-      }).then(this.streamSuccess).catch((error) => {
-        console.log(error.message)
-      })
+      // }).then(this.streamSuccess).catch((error) => {
+      //   console.log(error.message)
+      // })
     }
   }
 
   streamSuccess = (stream: any) => {
-    const localVideo: HTMLVideoElement = document.getElementById('localVideo') as HTMLVideoElement;
-    localVideo.srcObject = stream;
-    localVideo.play();
+    // const localVideo: HTMLVideoElement = document.getElementById('localVideo') as HTMLVideoElement;
+    // localVideo.srcObject = stream;
+    // localVideo.play();
 
     this.audioParams = { track: stream.getAudioTracks()[0], ...this.audioParams };
     this.videoParams = { track: stream.getVideoTracks()[0], ...this.videoParams };
@@ -172,6 +172,7 @@ export class AppComponent {
           console.error(data.error)
           return
         }
+
 
         // transport 생성 
         // producer = 제공자, 내가 보내는 전송 선 생성
@@ -335,6 +336,8 @@ export class AppComponent {
           elem.playsInline = false;
           elem.autoplay = true;
           elem.className = 'vid';
+          elem.width = 300;
+
           this.remoteVideosContainer.appendChild(elem);
           this.handleFS(elem.id)
         } else {
@@ -572,7 +575,6 @@ export class AppComponent {
           {
             rid: 'r0',
             maxBitrate: 100000,
-            //scaleResolutionDownBy: 10.0,
             scalabilityMode: 'S2T3'
           },
           {
@@ -583,6 +585,21 @@ export class AppComponent {
           {
             rid: 'r2',
             maxBitrate: 900000,
+            scalabilityMode: 'S2T3'
+          },
+          {
+            rid: 'r3',
+            maxBitrate: 1800000,
+            scalabilityMode: 'S2T3'
+          },
+          {
+            rid: 'r4',
+            maxBitrate: 2700000,
+            scalabilityMode: 'S2T3'
+          },
+          {
+            rid: 'r5',
+            maxBitrate: 3600000,
             scalabilityMode: 'S2T3'
           }
         ]
@@ -605,6 +622,8 @@ export class AppComponent {
         elem.playsInline = false
         elem.autoplay = true
         elem.className = 'vid'
+        elem.width = 300;
+
 
 
         this.localMediaEl.nativeElement.appendChild(elem)
