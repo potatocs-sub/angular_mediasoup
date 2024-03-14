@@ -6,11 +6,23 @@
     width: 100vw;
     height: 100vh;
     background-color: rgba(32, 33, 36, 255);
-
+    overflow: auto;
     color: white;
 
     .media_section {
         flex: 1;
+        display: flex;
+        gap: 10px;
+
+        .main_video_section {}
+
+
+        .sub_video_section {}
+
+        .containers {
+            display: flex;
+            gap: 10px;
+        }
     }
 
     .button_section {
@@ -53,4 +65,9 @@
             }
         }
     }
+
+
+
+
+
 }

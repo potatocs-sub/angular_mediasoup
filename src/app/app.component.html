@@ -15,15 +15,20 @@
 
 
   <section class="media_section">
+    <section class="main_video_section">
 
-    <div #localMedia id="localMedia" class="containers">
+    </section>
 
-    </div>
+    <section class="sub_video_section">
+      <div #remoteVideos id="remoteVideos" class="containers">
+        <div #remoteAudios id="remoteAudios"></div>
+      </div>
 
-    <div class="mediasoup_wrapper">
-      <div #remoteVideos id="remoteVideos" class="containers"></div>
-      <div #remoteAudios id="remoteAudios"></div>
-    </div>
+      <div #localMedia id="localMedia" class="containers">
+
+      </div>
+    </section>
+
   </section>
 
 
@@ -52,7 +57,7 @@
         class="fa-regular fa-circle-xmark"></i></button>
     }
 
-    <button class="exit_button" (click)="exit()"><i class="fa-solid fa-phone-slash"></i></button>
+    <button class="exit_button" (click)="exit()"><i class="fa-solid fa-phone"></i></button>
   </section>
   <!-- 여기에 카메라 정보 들어갈 드롭 다운 생성 -->
   <div #devicesList id="devicesList">
