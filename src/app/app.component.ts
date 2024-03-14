@@ -79,9 +79,15 @@ export class AppComponent {
 
 
 
-        children.width = this.mainVideo.nativeElement.clientWidth;
-
         children.height = this.mainVideo.nativeElement.clientHeight;
+        children.removeAttribute('width');
+
+
+
+        if (children.clientWidth > this.mainVideo.nativeElement.clientWidth) {
+          children.width = this.mainVideo.nativeElement.clientWidth;
+          children.removeAttribute('height');
+        }
 
       }
 
@@ -91,7 +97,7 @@ export class AppComponent {
 
 
   goToMainVideo(e: any): void {
-    console.log(e.target.clientWidth, e.target.clientHeight)
+    // console.log(e.target.clientWidth, e.target.clientHeight)
     // console.log(this.mainVideo.nativeElement.children[0])
     const children: any = this.mainVideo.nativeElement.children[0];
     // 이미 main에 보여주고 있는 영상이 있으면
@@ -99,13 +105,24 @@ export class AppComponent {
       children.height = 120;
       children.removeAttribute('width')
       children.style.position = ''
+      children.style.left = '';
+      children.style.transform = '';
       this.remoteVideosEl.nativeElement.appendChild(children);
     }
-    e.target.style.position = 'absolute'
-
-    e.target.width = this.mainVideo.nativeElement.clientWidth;
+    e.target.style.position = 'absolute';
+    e.target.style.left = '50%';
+    e.target.style.transform = 'translateX(-50%)';
 
     e.target.height = this.mainVideo.nativeElement.clientHeight;
+    e.target.removeAttribute('width');
+
+
+
+    if (e.target.clientWidth > this.mainVideo.nativeElement.clientWidth) {
+      e.target.width = this.mainVideo.nativeElement.clientWidth;
+      e.target.removeAttribute('height');
+    }
+
 
 
 
@@ -386,15 +403,25 @@ export class AppComponent {
           elem.autoplay = true;
           elem.className = 'vid';
           elem.height = 120;
+          elem.style.borderRadius = '5px';
 
           elem.onclick = (e) => { this.goToMainVideo(e) }
 
           const children: any = this.mainVideo.nativeElement.children[0];
 
           if (!children) {
-            elem.width = this.mainVideo.nativeElement.clientWidth;
-
+            elem.style.position = 'absolute';
+            elem.style.left = '50%';
+            elem.style.transform = 'translateX(-50%)';
             elem.height = this.mainVideo.nativeElement.clientHeight;
+            elem.removeAttribute('width');
+
+
+
+            if (elem.clientWidth > this.mainVideo.nativeElement.clientWidth) {
+              elem.width = this.mainVideo.nativeElement.clientWidth;
+              elem.removeAttribute('height');
+            }
             this.mainVideo.nativeElement.appendChild(elem);
           } else {
             this.remoteVideosEl.nativeElement.appendChild(elem);
@@ -690,14 +717,24 @@ export class AppComponent {
         elem.autoplay = true
         elem.className = 'vid'
         elem.height = 120;
+        elem.style.borderRadius = '5px';
 
         elem.onclick = (e: any) => { this.goToMainVideo(e) }
         const children: any = this.mainVideo.nativeElement.children[0];
 
         if (!children) {
-          elem.width = this.mainVideo.nativeElement.clientWidth;
-
+          elem.style.position = 'absolute';
+          elem.style.left = '50%';
+          elem.style.transform = 'translateX(-50%)';
           elem.height = this.mainVideo.nativeElement.clientHeight;
+          elem.removeAttribute('width');
+
+
+
+          if (elem.clientWidth > this.mainVideo.nativeElement.clientWidth) {
+            elem.width = this.mainVideo.nativeElement.clientWidth;
+            elem.removeAttribute('height');
+          }
           this.mainVideo.nativeElement.appendChild(elem);
         } else {
           this.remoteVideosEl.nativeElement.appendChild(elem)
