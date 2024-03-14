@@ -50,6 +50,7 @@ export class AppComponent {
   @ViewChild('roomIdInput') roomIdInputEl!: ElementRef<HTMLInputElement>;
   @ViewChild('nameInput') nameInputEl!: ElementRef<HTMLInputElement>;
 
+  @ViewChild('mainVideo') mainVideo!: ElementRef<HTMLDivElement>;
 
 
 
@@ -67,6 +68,18 @@ export class AppComponent {
     this.initializeElements();
 
     // this.getLocalStream()
+  }
+
+
+
+  goToMainVideo(e: any): void {
+    console.log(this.mainVideo.nativeElement.children[0])
+    const children = this.mainVideo.nativeElement.children[0];
+    // 이미 main에 보여주고 있는 영상이 있으면
+    if (children) {
+      this.remoteVideosEl.nativeElement.appendChild(children);
+    }
+    this.mainVideo.nativeElement.appendChild(e.target)
   }
 
   private initializeElements(): void {
@@ -341,7 +354,9 @@ export class AppComponent {
           elem.playsInline = false;
           elem.autoplay = true;
           elem.className = 'vid';
-          elem.width = 300;
+          elem.height = 200;
+
+          elem.onclick = (e) => { this.goToMainVideo(e) }
 
           this.remoteVideosEl.nativeElement.appendChild(elem);
           this.handleFS(elem.id)
@@ -631,11 +646,11 @@ export class AppComponent {
         elem.playsInline = false
         elem.autoplay = true
         elem.className = 'vid'
-        elem.width = 300;
+        elem.height = 200;
 
+        elem.onclick = (e: any) => { this.goToMainVideo(e) }
 
-
-        this.localMediaEl.nativeElement.appendChild(elem)
+        this.remoteVideosEl.nativeElement.appendChild(elem)
         this.handleFS(elem.id)
       }
 

@@ -6,18 +6,28 @@
     width: 100vw;
     height: 100vh;
     background-color: rgba(32, 33, 36, 255);
-    overflow: auto;
+    overflow: hidden;
     color: white;
 
     .media_section {
         flex: 1;
         display: flex;
+        flex-direction: column;
         gap: 10px;
+        width: 100%;
 
-        .main_video_section {}
+        .main_video_section {
+            flex: 1;
+        }
 
 
-        .sub_video_section {}
+        .sub_video_section {
+            height: 200px;
+            width: 100%;
+            display: flex;
+            overflow: auto;
+            gap: 10px;
+        }
 
         .containers {
             display: flex;
