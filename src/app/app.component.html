@@ -33,24 +33,26 @@
   <section class="button_section">
 
     @if(!isVideo){
-    <button (click)="produce('videoType')">video</button>
+    <button class="toggle_button" (click)="produce('videoType')"><i class="fa-solid fa-video"></i></button>
     }@else {
-    <button (click)="closeProducer('videoType')">close Video</button>
+    <button class="toggle_button" (click)="closeProducer('videoType')"><i class="fa-solid fa-video-slash"></i></button>
     }
 
     @if(!isAudio) {
-    <button (click)="produce('audioType')">audio</button>
+    <button class="toggle_button" (click)="produce('audioType')"><i class="fa-solid fa-microphone"></i></button>
     }@else {
-    <button (click)="closeProducer('audioType')">close audio</button>
+    <button class="toggle_button" (click)="closeProducer('audioType')"><i
+        class="fa-solid fa-microphone-slash"></i></button>
     }
 
     @if(!isScreen) {
-    <button (click)="produce('screenType')">screen</button>
+    <button class="toggle_button" (click)="produce('screenType')"><i class="fa-regular fa-circle-up"></i></button>
     }@else {
-    <button (click)="closeProducer('screenType')">screen</button>
+    <button class="toggle_button" (click)="closeProducer('screenType')"><i
+        class="fa-regular fa-circle-xmark"></i></button>
     }
 
-    <button (click)="exit()">exit</button>
+    <button class="exit_button" (click)="exit()"><i class="fa-solid fa-phone-slash"></i></button>
   </section>
   <!-- 여기에 카메라 정보 들어갈 드롭 다운 생성 -->
   <div #devicesList id="devicesList">

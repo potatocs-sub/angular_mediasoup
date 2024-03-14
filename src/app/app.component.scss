@@ -5,12 +5,52 @@
     flex-direction: column;
     width: 100vw;
     height: 100vh;
+    background-color: rgba(32, 33, 36, 255);
 
-
+    color: white;
 
     .media_section {
         flex: 1;
     }
 
-    .button_section {}
+    .button_section {
+        display: flex;
+        gap: 10px;
+
+
+        button {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+        }
+
+
+        .toggle_button {
+            width: 40px;
+            height: 40px;
+            font-size: 16px;
+
+
+            background-color: rgb(60, 64, 67);
+            border-radius: 50px;
+
+            &:hover {
+                background-color: rgba(67, 70, 73, 255);
+            }
+        }
+
+        .exit_button {
+            width: 56px;
+            height: 40px;
+
+            background-color: rgb(234, 67, 53);
+            border-radius: 50px;
+            font-size: 16px;
+
+            &:hover {
+                background-color: rgba(235, 81, 68, 255);
+            }
+        }
+    }
 }
