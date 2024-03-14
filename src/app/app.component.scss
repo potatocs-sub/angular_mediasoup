@@ -1,0 +1,16 @@
+.mediasoup_main {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    width: 100vw;
+    height: 100vh;
+
+
+
+    .media_section {
+        flex: 1;
+    }
+
+    .button_section {}
+}

@@ -31,7 +31,11 @@ export class AppComponent {
   consumerTransports: any = [];
 
 
-  joined: boolean = false;
+  joined: boolean = false; // join 됐는지 확인
+  isVideo: boolean = false; // 비디오 송출하고 있는지 확인
+  isAudio: boolean = false; // 오디오 송출하고 있는지 확인
+  isScreen: boolean = false; // 화면 공유 하고 있는지 확인
+
 
 
   @ViewChild('localMedia') localMediaEl!: ElementRef<HTMLDivElement>;

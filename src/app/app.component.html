@@ -1,68 +1,65 @@
-<div>
-  <div class="container">
-    <!-- 여기에 방 이름, 유저 이름 적기 -->
-    @if(!joined) {
-    <div>
-      <br />
-      <input #roomIdInput id="roomIdInput" type="text" value="123" />
-      <input #nameInput id="nameInput" type="text" value="user" />
-      <button (click)="joinRoom()">
-        join
-      </button>
-    </div>
-    }@else {
-    <div>
-      <button (click)="produce('videoType')">video</button>
-    </div>
+<div class="mediasoup_main">
 
-
-
-    <div>
-      <button (click)="produce('audioType')">audio</button>
-    </div>
-
-
-    <div>
-      <button (click)="produce('screenType')">screen</button>
-    </div>
-    <div>
-      <button (click)="exit()">exit</button>
-    </div>
-
-    <div>
-      <button (click)="closeProducer('videoType')">close Video</button>
-    </div>
-
-    <div>
-      <button (click)="closeProducer('audioType')">close audio</button>
-    </div>
-
-
-    <div>
-      <button (click)="closeProducer('screenType')">screen</button>
-    </div>
-
-    <!-- 여기에 카메라 정보 들어갈 드롭 다운 생성 -->
-    <div #devicesList id="devicesList">
-      <i>Audio:</i>
-      <select #audioSelect id="audioSelect"></select>
-      <br />
-      <i>Video:</i>
-      <select #videoSelect id="videoSelect" (change)="getLocalStream()"></select>
-    </div>
-    }
-
-
-
+  <!-- 여기에 방 이름, 유저 이름 적기 -->
+  @if(!joined) {
+  <div>
+    <br />
+    <input #roomIdInput id="roomIdInput" type="text" value="123" />
+    <input #nameInput id="nameInput" type="text" value="user" />
+    <button (click)="joinRoom()">
+      join
+    </button>
   </div>
+  }@else {
 
-  <!-- <video id="localVideo" width="250"></video> -->
-  <div #localMedia id="localMedia" class="containers">
 
+
+  <section class="media_section">
+
+    <div #localMedia id="localMedia" class="containers">
+
+    </div>
+
+    <div class="mediasoup_wrapper">
+      <div #remoteVideos id="remoteVideos" class="containers"></div>
+      <div #remoteAudios id="remoteAudios"></div>
+    </div>
+  </section>
+
+
+
+
+
+  <section class="button_section">
+
+    <button (click)="produce('videoType')">video</button>
+
+
+    <button (click)="produce('audioType')">audio</button>
+
+    <button (click)="produce('screenType')">screen</button>
+
+    <button (click)="closeProducer('videoType')">close Video</button>
+
+    <button (click)="closeProducer('audioType')">close audio</button>
+
+    <button (click)="closeProducer('screenType')">screen</button>
+
+    <button (click)="exit()">exit</button>
+
+
+
+  </section>
+  <!-- 여기에 카메라 정보 들어갈 드롭 다운 생성 -->
+  <div #devicesList id="devicesList">
+    <i>Audio:</i>
+    <select #audioSelect id="audioSelect"></select>
+    <br />
+    <i>Video:</i>
+    <select #videoSelect id="videoSelect" (change)="getLocalStream()"></select>
   </div>
-  <h1>-------------------------------------</h1>
-  <div class="mediasoup_wrapper">
-    <div #remoteVideos id="remoteVideos" class="containers"></div>
-    <div #remoteAudios id="remoteAudios"></div>
-  </div>
+  }
+
+
+
 </div>
