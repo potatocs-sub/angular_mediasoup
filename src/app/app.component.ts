@@ -30,6 +30,10 @@ export class AppComponent {
   consumingTransports: any = [];
   consumerTransports: any = [];
 
+
+  joined: boolean = false;
+
+
   @ViewChild('localMedia') localMediaEl!: ElementRef<HTMLDivElement>;
   @ViewChild('remoteVideos') remoteVideosEl!: ElementRef<HTMLDivElement>;
   @ViewChild('remoteAudios') remoteAudiosEl!: ElementRef<HTMLDivElement>;
@@ -41,11 +45,9 @@ export class AppComponent {
   @ViewChild('roomIdInput') roomIdInputEl!: ElementRef<HTMLInputElement>;
   @ViewChild('nameInput') nameInputEl!: ElementRef<HTMLInputElement>;
 
-  localMediaContainer!: HTMLDivElement;
-  remoteVideosContainer!: HTMLDivElement;
-  remoteAudiosContainer!: HTMLDivElement;
 
-  audioSelect!: HTMLSelectElement;
+
+
   videoSelect!: HTMLSelectElement;
 
   roomIdInput!: HTMLInputElement;
@@ -58,17 +60,12 @@ export class AppComponent {
 
   ngAfterViewInit(): void {
     this.initializeElements();
-    this.initEnumerateDevices()
+
     // this.getLocalStream()
   }
 
   private initializeElements(): void {
-    this.localMediaContainer = this.localMediaEl.nativeElement
-    this.remoteVideosContainer = this.remoteVideosEl.nativeElement
-    this.remoteAudiosContainer = this.remoteAudiosEl.nativeElement
 
-    this.audioSelect = this.audioSelectEl.nativeElement;
-    this.videoSelect = this.videoSelectEl.nativeElement;
 
     this.roomIdInput = this.roomIdInputEl.nativeElement;
     this.nameInput = this.nameInputEl.nativeElement;
@@ -126,6 +123,7 @@ export class AppComponent {
         // 일단 만들려고 시도
         // 방 참가
         await this.socket.emit('join', { name, room_id }, async (response: any) => {
+          this.joined = true;
           // console.log('join to room', response)
           // 통신을 위해 필요한 미디어 수준 정보 요청 
           await this.socket.emit('getRouterRtpCapabilities', {}, async (data: any) => {
@@ -134,6 +132,7 @@ export class AppComponent {
             this.device = device;
             // 초기 연결 설정 producer , consumer 연결 transport 
             await this.initTransports(device)
+            this.initEnumerateDevices()
           })
         })
       })
@@ -338,7 +337,7 @@ export class AppComponent {
           elem.className = 'vid';
           elem.width = 300;
 
-          this.remoteVideosContainer.appendChild(elem);
+          this.remoteVideosEl.nativeElement.appendChild(elem);
           this.handleFS(elem.id)
         } else {
           elem = document.createElement('audio')
@@ -346,7 +345,7 @@ export class AppComponent {
           elem.id = consumer.id
           // elem.playsInline = false
           elem.autoplay = true
-          this.remoteAudiosContainer.appendChild(elem)
+          this.remoteAudiosEl.nativeElement.appendChild(elem)
         }
 
         consumer.on(
@@ -483,9 +482,9 @@ export class AppComponent {
       devices.forEach((device: any) => {
         let el: any = null
         if ('audioinput' === device.kind) {
-          el = this.audioSelect
+          el = this.audioSelectEl?.nativeElement
         } else if ('videoinput' === device.kind) {
-          el = this.videoSelect
+          el = this.videoSelectEl?.nativeElement
         }
         if (!el) return
 
@@ -516,7 +515,7 @@ export class AppComponent {
     let screen = false;
     switch (type) {
       case this.mediaType.audio:
-        deviceId = this.audioSelect.value;
+        deviceId = this.audioSelectEl.nativeElement.value;
         mediaConstraints = {
           audio: {
             deviceId: deviceId
@@ -526,7 +525,7 @@ export class AppComponent {
         audio = true
         break;
       case this.mediaType.video:
-        deviceId = this.videoSelect.value;
+        deviceId = this.videoSelectEl.nativeElement.value;
         mediaConstraints = {
           audio: false,
           video: {
