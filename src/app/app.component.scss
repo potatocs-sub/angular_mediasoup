@@ -88,6 +88,17 @@
             &:hover {
                 background-color: rgba(67, 70, 73, 255);
             }
+
+
+        }
+
+        .active {
+            background-color: white;
+            color: rgba(255, 180, 18, 255);
+
+            &:hover {
+                background-color: rgb(236, 236, 236);
+            }
         }
 
         .exit_button {
