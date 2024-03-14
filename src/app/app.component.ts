@@ -73,12 +73,22 @@ export class AppComponent {
 
 
   goToMainVideo(e: any): void {
-    console.log(this.mainVideo.nativeElement.children[0])
-    const children = this.mainVideo.nativeElement.children[0];
+    console.log(e.target.clientWidth, e.target.clientHeight)
+    // console.log(this.mainVideo.nativeElement.children[0])
+    const children: any = this.mainVideo.nativeElement.children[0];
     // 이미 main에 보여주고 있는 영상이 있으면
     if (children) {
+      children.height = 150;
+      children.removeAttribute('width')
       this.remoteVideosEl.nativeElement.appendChild(children);
     }
+
+
+
+    e.target.width = this.mainVideo.nativeElement.clientWidth;
+
+    e.target.height = this.mainVideo.nativeElement.clientHeight;
+
     this.mainVideo.nativeElement.appendChild(e.target)
   }
 
@@ -354,7 +364,7 @@ export class AppComponent {
           elem.playsInline = false;
           elem.autoplay = true;
           elem.className = 'vid';
-          elem.height = 200;
+          elem.height = 150;
 
           elem.onclick = (e) => { this.goToMainVideo(e) }
 
@@ -646,7 +656,7 @@ export class AppComponent {
         elem.playsInline = false
         elem.autoplay = true
         elem.className = 'vid'
-        elem.height = 200;
+        elem.height = 150;
 
         elem.onclick = (e: any) => { this.goToMainVideo(e) }
 
