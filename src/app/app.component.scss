@@ -18,11 +18,13 @@
 
         .main_video_section {
             flex: 1;
+            overflow: hidden;
+            position: relative;
         }
 
 
         .sub_video_section {
-            height: 150px;
+            height: 120px;
             max-width: 100%;
             margin: 0 auto;
             padding: 0 5px;
