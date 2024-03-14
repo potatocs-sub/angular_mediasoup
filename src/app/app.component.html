@@ -32,23 +32,25 @@
 
   <section class="button_section">
 
+    @if(!isVideo){
     <button (click)="produce('videoType')">video</button>
-
-
-    <button (click)="produce('audioType')">audio</button>
-
-    <button (click)="produce('screenType')">screen</button>
-
+    }@else {
     <button (click)="closeProducer('videoType')">close Video</button>
+    }
 
+    @if(!isAudio) {
+    <button (click)="produce('audioType')">audio</button>
+    }@else {
     <button (click)="closeProducer('audioType')">close audio</button>
+    }
 
+    @if(!isScreen) {
+    <button (click)="produce('screenType')">screen</button>
+    }@else {
     <button (click)="closeProducer('screenType')">screen</button>
+    }
 
     <button (click)="exit()">exit</button>
-
-
-
   </section>
   <!-- 여기에 카메라 정보 들어갈 드롭 다운 생성 -->
   <div #devicesList id="devicesList">

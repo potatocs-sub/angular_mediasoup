@@ -128,6 +128,7 @@ export class AppComponent {
         // 방 참가
         await this.socket.emit('join', { name, room_id }, async (response: any) => {
           this.joined = true;
+          this.initEnumerateDevices()
           // console.log('join to room', response)
           // 통신을 위해 필요한 미디어 수준 정보 요청 
           await this.socket.emit('getRouterRtpCapabilities', {}, async (data: any) => {
@@ -136,7 +137,7 @@ export class AppComponent {
             this.device = device;
             // 초기 연결 설정 producer , consumer 연결 transport 
             await this.initTransports(device)
-            this.initEnumerateDevices()
+
           })
         })
       })
@@ -418,6 +419,7 @@ export class AppComponent {
 
   // 나가기 함수
   exit(offline = false) {
+    this.joined = false;
     // this.socket.emit('exitRoom', ())
     let clean = () => {
       this._isOpen = false
@@ -519,6 +521,7 @@ export class AppComponent {
     let screen = false;
     switch (type) {
       case this.mediaType.audio:
+        this.isAudio = true;
         deviceId = this.audioSelectEl.nativeElement.value;
         mediaConstraints = {
           audio: {
@@ -529,6 +532,7 @@ export class AppComponent {
         audio = true
         break;
       case this.mediaType.video:
+        this.isVideo = true;
         deviceId = this.videoSelectEl.nativeElement.value;
         mediaConstraints = {
           audio: false,
@@ -546,6 +550,7 @@ export class AppComponent {
         }
         break;
       case this.mediaType.screen:
+        this.isScreen = true;
         mediaConstraints = false
         screen = true
         break;
@@ -704,18 +709,18 @@ export class AppComponent {
       elem.parentNode.removeChild(elem)
     }
 
-    // switch (type) {
-    //   case mediaType.audio:
-    //     this.event(_EVENTS.stopAudio)
-    //     break
-    //   case mediaType.video:
-    //     this.event(_EVENTS.stopVideo)
-    //     break
-    //   case mediaType.screen:
-    //     this.event(_EVENTS.stopScreen)
-    //     break
-    //   default:
-    //     return
-    // }
+    switch (type) {
+      case this.mediaType.audio:
+        this.isAudio = false;
+        break
+      case this.mediaType.video:
+        this.isVideo = false;
+        break
+      case this.mediaType.screen:
+        this.isScreen = false;
+        break
+      default:
+        return
+    }
   }
 }
