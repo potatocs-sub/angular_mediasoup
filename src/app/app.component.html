@@ -34,19 +34,31 @@
 
 
   <section class="button_section">
+    <div class="select_button">
+      <button class="updown_button"><i class="fa-solid fa-angle-up"></i></button>
+      @if(!isAudio) {
+      <button class="toggle_button right_side" (click)="produce('audioType')"><i
+          class="fa-solid fa-microphone"></i></button>
+      }@else {
+      <button class="toggle_button right_side" (click)="closeProducer('audioType')"><i
+          class="fa-solid fa-microphone-slash"></i></button>
+      }
+    </div>
 
-    @if(!isVideo){
-    <button class="toggle_button" (click)="produce('videoType')"><i class="fa-solid fa-video"></i></button>
-    }@else {
-    <button class="toggle_button" (click)="closeProducer('videoType')"><i class="fa-solid fa-video-slash"></i></button>
-    }
 
-    @if(!isAudio) {
-    <button class="toggle_button" (click)="produce('audioType')"><i class="fa-solid fa-microphone"></i></button>
-    }@else {
-    <button class="toggle_button" (click)="closeProducer('audioType')"><i
-        class="fa-solid fa-microphone-slash"></i></button>
-    }
+    <div class="select_button">
+      <button class="updown_button"><i class="fa-solid fa-angle-up"></i></button>
+      @if(!isVideo){
+
+      <button class="toggle_button right_side" (click)="produce('videoType')"><i class="fa-solid fa-video"></i></button>
+
+      }@else {
+      <button class="toggle_button right_side" (click)="closeProducer('videoType')"><i
+          class="fa-solid fa-video-slash"></i></button>
+      }
+    </div>
+
+
 
     @if(!isScreen) {
     <button class="toggle_button" (click)="produce('screenType')"><i class="fa-regular fa-circle-up"></i></button>

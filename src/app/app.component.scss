@@ -55,6 +55,27 @@
         }
 
 
+        .select_button {
+            width: 66px;
+            height: 40px;
+            position: relative;
+            background-color: rgba(47, 50, 53, 255);
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            font-size: 8px;
+
+            .updown_button {
+                padding: 8px;
+            }
+
+            .right_side {
+                position: absolute;
+                right: 0;
+                top: 0;
+            }
+        }
+
         .toggle_button {
             width: 40px;
             height: 40px;
