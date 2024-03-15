@@ -750,16 +750,6 @@ export class AppComponent {
           },
           {
             rid: 'r3',
-            maxBitrate: 1800000,
-            scalabilityMode: 'S2T3'
-          },
-          {
-            rid: 'r4',
-            maxBitrate: 2700000,
-            scalabilityMode: 'S2T3'
-          },
-          {
-            rid: 'r5',
             maxBitrate: 3600000,
             scalabilityMode: 'S2T3'
           }
