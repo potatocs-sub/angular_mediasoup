@@ -5,10 +5,39 @@
     flex-direction: column;
     width: 100vw;
     height: 100vh;
-    background-color: rgba(32, 33, 36, 255);
+    background-color: rgba(32, 33, 36);
     overflow: hidden;
     color: white;
 
+
+    .cover_container {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+
+        .join_input {
+            padding: 5px;
+            box-sizing: border-box;
+            outline: none;
+            border: none;
+            border-radius: 5px;
+            font-size: large;
+        }
+
+        .join_button {
+            margin-top: 10px;
+            border-radius: 5px;
+            padding: 8pt;
+            font-weight: bold;
+            color: white;
+
+            background-color: rgba(255, 180, 18);
+
+            &:hover {
+                background-color: rgb(228, 161, 17);
+            }
+        }
+    }
 
     .media_section {
         flex: 1;
@@ -61,7 +90,7 @@
             width: 66px;
             height: 40px;
             position: relative;
-            background-color: rgba(47, 50, 53, 255);
+            background-color: rgb(47, 50, 53);
             border-radius: 50px;
             display: flex;
             align-items: center;
@@ -96,7 +125,7 @@
 
         .active {
             background-color: white;
-            color: rgba(255, 180, 18, 255);
+            color: rgba(255, 180, 18);
 
             &:hover {
                 background-color: rgb(236, 236, 236);
@@ -112,7 +141,7 @@
             font-size: 16px;
 
             &:hover {
-                background-color: rgba(235, 81, 68, 255);
+                background-color: rgba(235, 81, 68);
             }
         }
 
@@ -122,7 +151,7 @@
         .select_container {
             position: absolute;
             height: 50px;
-            background-color: rgba(44, 44, 44, 255);
+            background-color: rgba(44, 44, 44);
             top: -60px;
             display: flex;
             justify-content: center;
@@ -134,9 +163,4 @@
             transform: translateX(-50%);
         }
     }
-
-
-
-
-
 }

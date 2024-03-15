@@ -830,6 +830,9 @@ export class AppComponent {
       //     return
       // }
     } catch (err: any) {
+      if (type == this.mediaType.screen) {
+        this.isScreen = false;
+      }
       console.log('Produce error:', err)
     }
   }

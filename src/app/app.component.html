@@ -2,10 +2,11 @@
 
   <!-- 여기에 방 이름, 유저 이름 적기 -->
   @if(!joined) {
-  <div>
-    <input #roomIdInput id="roomIdInput" type="text" value="123" />
-    <input #nameInput id="nameInput" type="text" value="user" />
-    <button (click)="joinRoom()">
+  <div class="cover_container">
+    <img src="/assets/logo-potatocs.png" />
+    <input class="join_input" #roomIdInput id="roomIdInput" type="text" value="123" />
+    <input class="join_input" #nameInput id="nameInput" type="text" value="user" />
+    <button class="join_button" (click)="joinRoom()">
       join
     </button>
   </div>
@@ -104,8 +105,8 @@
     @if(!isScreen) {
     <button class="toggle_button" (click)="produce('screenType')"><i class="fa-regular fa-circle-up"></i></button>
     }@else {
-    <button class="toggle_button" (click)="closeProducer('screenType')"><i
-        class="fa-regular fa-circle-xmark"></i></button>
+    <button class="toggle_button active" (click)="closeProducer('screenType')"><i
+        class="fa-regular fa-circle-up"></i></button>
     }
 
     <button class="exit_button" (click)="exit()"><i class="fa-solid fa-phone"></i></button>
