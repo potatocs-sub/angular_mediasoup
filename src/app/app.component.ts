@@ -37,6 +37,14 @@ export class AppComponent {
   isAudio: boolean = false; // 오디오 송출하고 있는지 확인
   isScreen: boolean = false; // 화면 공유 하고 있는지 확인
 
+  videoSelectToggle: boolean = false; // 비디오 셀렉트 박스 토글 확인용 변수
+  audioSelectToggle: boolean = false; // 오디오 셀렉트 박스 토글 확인용 변수
+
+  nowVideoValue: any;
+  nowAudioValue: any;
+
+  videoOptions: Array<any> = [];
+  audioOptions: Array<any> = [];
 
 
   @ViewChild('localMedia') localMediaEl!: ElementRef<HTMLDivElement>;
@@ -64,13 +72,36 @@ export class AppComponent {
     private socket: Socket
   ) { }
 
+  audioToggle() {
+    this.audioSelectToggle = !this.audioSelectToggle;
+    if (this.videoSelectToggle) {
+      this.videoSelectToggle = false;
+    }
+  }
+
+  videoToggle() {
+    this.videoSelectToggle = !this.videoSelectToggle;
+    if (this.audioSelectToggle) {
+      this.audioSelectToggle = false;
+    }
+  }
+
+
+  changeAudioValue(e: any) {
+    this.nowAudioValue = e.target.value
+  }
+
+  changeVideoValue(e: any) {
+    this.nowVideoValue = e.target.value;
+  }
+
   ngAfterViewInit(): void {
     this.initializeElements();
 
     // this.getLocalStream()
 
     window.addEventListener('resize', (event: any) => {
-      console.log(this.mainVideo.nativeElement.clientWidth)
+      // console.log(this.mainVideo.nativeElement.clientWidth)
       const children: any = this.mainVideo.nativeElement.children[0];
 
       if (children) {
@@ -190,6 +221,7 @@ export class AppComponent {
         // 방 참가
         await this.socket.emit('join', { name, room_id }, async (response: any) => {
           this.joined = true;
+          // console.log(response)
           this.initEnumerateDevices()
           // console.log('join to room', response)
           // 통신을 위해 필요한 미디어 수준 정보 요청 
@@ -546,46 +578,59 @@ export class AppComponent {
 
 
   initEnumerateDevices() {
-    if (this.isEnumerateDevices) return;
+    this.enumerateDevices()
+    // if (this.isEnumerateDevices) return;
 
-    const constraints = {
-      audio: true,
-      video: true
-    }
+    // const constraints = {
+    //   audio: true,
+    //   video: true
+    // }
 
-    if (isPlatformBrowser(this._platform) && 'mediaDevices' in navigator) {
-      navigator.mediaDevices
-        .getUserMedia(constraints)
-        .then((stream) => {
+    // if (isPlatformBrowser(this._platform) && 'mediaDevices' in navigator) {
+    //   navigator.mediaDevices
+    //     .getUserMedia(constraints)
+    //     .then((stream) => {
 
-          this.enumerateDevices()
-          stream.getTracks().forEach(function (track) {
-            track.stop()
-          })
-        })
-        .catch((err) => {
-          console.error('Access denied for audio/video: ', err)
-        })
-    }
+
+    //       stream.getTracks().forEach(function (track) {
+    //         track.stop()
+    //       })
+    //     })
+    //     .catch((err) => {
+    //       console.error('Access denied for audio/video: ', err)
+    //     })
+    // }
   }
 
   enumerateDevices() {
     navigator.mediaDevices.enumerateDevices().then((devices: any) => {
       devices.forEach((device: any) => {
-        let el: any = null
+        let el: any = null;
+        let nowValue: any = null;
         if ('audioinput' === device.kind) {
-          el = this.audioSelectEl?.nativeElement
+          // el = this.audioSelectEl?.nativeElement
+          el = this.audioOptions;
+          nowValue = this.nowAudioValue;
         } else if ('videoinput' === device.kind) {
-          el = this.videoSelectEl?.nativeElement
+          // el = this.videoSelectEl?.nativeElement
+          el = this.videoOptions;
+          nowValue = this.nowVideoValue;
         }
         if (!el) return
 
         let option = document.createElement('option');
         option.value = device.deviceId
         option.innerText = device.label
-        el.appendChild(option)
+
+        if (!nowValue) {
+          nowValue = device.deviceId;
+        }
+
+        // el.appendChild(option)
+        el.push(option)
         this.isEnumerateDevices = true
       })
+      // console.log(this.videoOptions)
     })
 
   }
@@ -608,7 +653,7 @@ export class AppComponent {
     switch (type) {
       case this.mediaType.audio:
         this.isAudio = true;
-        deviceId = this.audioSelectEl.nativeElement.value;
+        deviceId = this.nowAudioValue;
         mediaConstraints = {
           audio: {
             deviceId: deviceId
@@ -619,7 +664,7 @@ export class AppComponent {
         break;
       case this.mediaType.video:
         this.isVideo = true;
-        deviceId = this.videoSelectEl.nativeElement.value;
+        deviceId = this.nowVideoValue;
         mediaConstraints = {
           audio: false,
           video: {

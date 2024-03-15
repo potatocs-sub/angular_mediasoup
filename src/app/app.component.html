@@ -3,7 +3,6 @@
   <!-- 여기에 방 이름, 유저 이름 적기 -->
   @if(!joined) {
   <div>
-    <br />
     <input #roomIdInput id="roomIdInput" type="text" value="123" />
     <input #nameInput id="nameInput" type="text" value="user" />
     <button (click)="joinRoom()">
@@ -34,8 +33,45 @@
 
 
   <section class="button_section">
+    <!-- 여기에 카메라 정보 들어갈 드롭 다운 생성 -->
+    @if(videoSelectToggle || audioSelectToggle){
+    <div #devicesList id="devicesList" class="select_container">
+      <!-- <i>Audio:</i>
+        
+        <select #audioSelect id="audioSelect"></select>
+        <br />
+        <i>Video:</i> -->
+
+      @if(audioSelectToggle){
+      <select #audioSelect id="audioSelect" (change)="changeAudioValue($event)">
+        @for(option of audioOptions; track option){
+        <option [value]="option.value">{{option.label}}</option>
+        }
+      </select>
+      }
+
+      @if(videoSelectToggle){
+      <select #videoSelect id="videoSelect" (change)="changeVideoValue($event)">
+        @for(option of videoOptions; track option){
+        <option [value]="option.value">{{option.label}}</option>
+        }
+      </select>
+      }
+
+    </div>
+    }
+
+
+
     <div class="select_button">
-      <button class="updown_button"><i class="fa-solid fa-angle-up"></i></button>
+      @if(audioSelectToggle){
+      <button class="updown_button" (click)="audioToggle()">
+        <i class="fa-solid fa-angle-down"></i>
+      </button>
+      }@else {
+      <button class="updown_button" (click)="audioToggle()">
+        <i class="fa-solid fa-angle-up"></i>
+      </button>}
       @if(!isAudio) {
       <button class="toggle_button right_side" (click)="produce('audioType')"><i
           class="fa-solid fa-microphone"></i></button>
@@ -47,7 +83,12 @@
 
 
     <div class="select_button">
-      <button class="updown_button"><i class="fa-solid fa-angle-up"></i></button>
+      @if(videoSelectToggle) {
+      <button class="updown_button" (click)="videoToggle()"><i class="fa-solid fa-angle-down"></i></button>
+      }@else {
+      <button class="updown_button" (click)="videoToggle()"><i class="fa-solid fa-angle-up"></i></button>
+      }
+
       @if(!isVideo){
 
       <button class="toggle_button right_side" (click)="produce('videoType')"><i class="fa-solid fa-video"></i></button>
@@ -69,14 +110,7 @@
 
     <button class="exit_button" (click)="exit()"><i class="fa-solid fa-phone"></i></button>
   </section>
-  <!-- 여기에 카메라 정보 들어갈 드롭 다운 생성 -->
-  <div #devicesList id="devicesList">
-    <i>Audio:</i>
-    <select #audioSelect id="audioSelect"></select>
-    <br />
-    <i>Video:</i>
-    <select #videoSelect id="videoSelect" (change)="getLocalStream()"></select>
-  </div>
+
   }
 
 

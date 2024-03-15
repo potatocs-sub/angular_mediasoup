@@ -45,6 +45,8 @@
     .button_section {
         display: flex;
         gap: 10px;
+        position: relative;
+        padding-bottom: 10px;
 
 
         button {
@@ -112,6 +114,24 @@
             &:hover {
                 background-color: rgba(235, 81, 68, 255);
             }
+        }
+
+
+
+
+        .select_container {
+            position: absolute;
+            height: 50px;
+            background-color: rgba(44, 44, 44, 255);
+            top: -60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+            border-radius: 50px;
+            box-sizing: border-box;
+            left: 50%;
+            transform: translateX(-50%);
         }
     }
 
