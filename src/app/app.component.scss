@@ -161,6 +161,19 @@
             box-sizing: border-box;
             left: 50%;
             transform: translateX(-50%);
+
+
+            .select_box {
+                color: white;
+                outline: none;
+                background-color: transparent;
+
+                border: none;
+
+                option {
+                    background-color: rgba(44, 44, 44);
+                }
+            }
         }
     }
 }

@@ -44,7 +44,7 @@
         <i>Video:</i> -->
 
       @if(audioSelectToggle){
-      <select #audioSelect id="audioSelect" (change)="changeAudioValue($event)">
+      <select class="select_box" #audioSelect id="audioSelect" (change)="changeAudioValue($event)">
         @for(option of audioOptions; track option){
         <option [value]="option.value">{{option.label}}</option>
         }
@@ -52,7 +52,7 @@
       }
 
       @if(videoSelectToggle){
-      <select #videoSelect id="videoSelect" (change)="changeVideoValue($event)">
+      <select class="select_box" #videoSelect id="videoSelect" (change)="changeVideoValue($event)">
         @for(option of videoOptions; track option){
         <option [value]="option.value">{{option.label}}</option>
         }
