@@ -95,6 +95,23 @@ export class AppComponent {
     this.nowVideoValue = e.target.value;
   }
 
+
+
+  videoCapture(e: any) {
+    // console.log(e);
+    const canvas = document.createElement('canvas');
+    canvas.width = e.target.clientWidth;
+    canvas.height = e.target.clientHeight;
+
+    canvas.getContext('2d')?.drawImage(e.target, 0, 0, canvas.width, canvas.height);
+    const dataURL = canvas.toDataURL('image/png');
+    const a = document.createElement('a');
+    a.href = dataURL;
+    a.download = 'capture.png';
+    a.click();
+
+  }
+
   ngAfterViewInit(): void {
     this.initializeElements();
 
@@ -439,6 +456,8 @@ export class AppComponent {
 
           elem.onclick = (e) => { this.goToMainVideo(e) }
 
+          elem.ondblclick = (e) => { this.videoCapture(e) }
+
           const children: any = this.mainVideo.nativeElement.children[0];
 
           if (!children) {
@@ -546,6 +565,9 @@ export class AppComponent {
       this.socket.off('disconnect')
       this.socket.off('newProducers')
       this.socket.off('consumerClosed')
+      this.isVideo = false;
+      this.isAudio = false;
+      this.isScreen = false;
     }
 
     if (!offline) {
@@ -765,6 +787,7 @@ export class AppComponent {
         elem.style.borderRadius = '5px';
 
         elem.onclick = (e: any) => { this.goToMainVideo(e) }
+        elem.ondblclick = (e: any) => { this.videoCapture(e) }
         const children: any = this.mainVideo.nativeElement.children[0];
 
         if (!children) {
