@@ -146,9 +146,14 @@ export class AppComponent {
 
 
   goToMainVideo(e: any): void {
-    console.log(e.children[1])
+    console.log(e.parentNode.className)
     // console.log(e.target.clientWidth, e.target.clientHeight)
     // console.log(this.mainVideo.nativeElement.children[0])
+    // 클릭한게 main_video이면
+    if (e.parentNode.className == 'main_video_section') {
+      return;
+    }
+
     const children: any = this.mainVideo.nativeElement.children[0].children[1];
     // 이미 main에 보여주고 있는 영상이 있으면
     if (children) {
@@ -441,13 +446,18 @@ export class AppComponent {
 
 
   createVideoContainer(name: string) {
-    const video_container = document.createElement('div');
-    const name_elem = document.createElement('div');
+    const video_container = document.createElement('div'); // 비디오 컨테이너
+    const name_elem = document.createElement('div'); // 이름
+    const guard = document.createElement('div'); // 가드
+
+
+
     video_container.style.position = 'relative';
     video_container.style.overflow = 'hidden';
     video_container.style.width = 'fit-content';
 
-    // console.log(name)
+
+    // 이름
     name_elem.innerText = name;
     const nameStyle = name_elem.style;
     nameStyle.position = 'absolute';
@@ -458,7 +468,28 @@ export class AppComponent {
     nameStyle.backgroundColor = 'rgba(0,0,0,0.5)'
 
 
+    // 가드
+    guard.style.width = '100%';
+    guard.style.height = '100%';
+    guard.style.position = 'absolute';
+    guard.style.backgroundColor = 'rgba(0,0,0,0.3)'
+    guard.style.display = 'none';
+    guard.style.justifyContent = 'center';
+    guard.style.alignItems = 'center';
 
+    // 메뉴 버튼들
+
+
+
+    // video_container.addEventListener('mouseenter', function () {
+    //   guard.style.display = 'flex'
+    // })
+
+    // video_container.addEventListener('mouseleave', function () {
+    //   guard.style.display = 'none'
+    // })
+
+    // video_container.appendChild(guard)
     video_container.appendChild(name_elem)
 
     return video_container
@@ -481,11 +512,13 @@ export class AppComponent {
           elem.id = consumer.id;
           elem.playsInline = false;
           elem.autoplay = true;
+
           elem.style.boxSizing = 'border-box'
           elem.style.border = '2px solid rgba(0,0,0,0)'
           elem.className = `vid ${producer_socket_id}`;
           elem.height = 120;
           elem.style.borderRadius = '5px';
+
           video_container.onclick = (e: any) => { this.goToMainVideo(video_container) }
           video_container.ondblclick = (e: any) => { this.videoCapture(video_container) }
 
@@ -862,7 +895,7 @@ export class AppComponent {
       let elem: any;
       if (!audio) {
 
-        const video_container = this.createVideoContainer(this.nameInput.value);
+        const video_container = this.createVideoContainer(this.nameInput.value + ' (me)');
 
 
         elem = document.createElement('video')
@@ -875,6 +908,9 @@ export class AppComponent {
         elem.style.border = '2px solid rgba(0,0,0,0)'
         elem.height = 120;
         elem.style.borderRadius = '5px';
+        elem.style.zIndex = '0'
+
+
 
         video_container.onclick = (e: any) => { this.goToMainVideo(video_container) }
         video_container.ondblclick = (e: any) => { this.videoCapture(elem) }
