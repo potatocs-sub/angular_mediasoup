@@ -101,10 +101,10 @@ export class AppComponent {
   videoCapture(e: any) {
     // console.log(e);
     const canvas = document.createElement('canvas');
-    canvas.width = e.target.clientWidth;
-    canvas.height = e.target.clientHeight;
+    canvas.width = e.clientWidth;
+    canvas.height = e.clientHeight;
 
-    canvas.getContext('2d')?.drawImage(e.target, 0, 0, canvas.width, canvas.height);
+    canvas.getContext('2d')?.drawImage(e, 0, 0, canvas.width, canvas.height);
     const dataURL = canvas.toDataURL('image/png');
     const a = document.createElement('a');
     a.href = dataURL;
