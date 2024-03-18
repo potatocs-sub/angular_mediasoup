@@ -514,12 +514,65 @@ export class AppComponent {
 
           this.handleFS(elem.id)
         } else {
+
           elem = document.createElement('audio')
           elem.srcObject = stream
           elem.id = consumer.id
           // elem.playsInline = false
-          elem.autoplay = true
+          elem.autoplay = true;
+          elem.pause();
+          // 원격 오디오 요소 추가
           this.remoteAudiosEl.nativeElement.appendChild(elem)
+
+          // 오디오 컨텍스트 생성
+          let audioContext = new AudioContext();
+
+          // 소스 노드 생성
+          let source = audioContext.createMediaStreamSource(stream);
+
+          // Analyser 노드 생성
+          let analyser = audioContext.createAnalyser();
+          source.connect(analyser);
+
+          // FFT 크기 설정 (분석을 위한 배열의 크기)
+          analyser.fftSize = 2048;
+          let bufferLength = analyser.frequencyBinCount;
+          let dataArray = new Uint8Array(bufferLength);
+
+          let audioTime: any;
+
+          // 소리 데시벨 모니터링
+          function monitorDecibel() {
+            // FFT 데이터 가져오기
+            analyser.getByteFrequencyData(dataArray);
+
+            // 데시벨 값 계산
+            let sum = 0;
+            for (let i = 0; i < bufferLength; i++) {
+              sum += dataArray[i];
+            }
+            let average = sum / bufferLength;
+            let decibel = 20 * Math.log10(average / 255);
+            // console.log(decibel)
+            // 임계값 초과 시 콘솔에 로그 출력
+            if (decibel > -20) {
+              elem.play();
+              if (audioTime) {
+                clearTimeout(audioTime)
+              }
+
+              console.log(`${name}의 소리가 -20dB를 초과했습니다!`);
+
+              audioTime = setTimeout(() => {
+                elem.pause();
+              }, 3000);
+            }
+
+            // 주기적으로 모니터링
+            requestAnimationFrame(monitorDecibel);
+          }
+          // 소리 데시벨 모니터링 시작
+          monitorDecibel();
         }
 
         consumer.on(
