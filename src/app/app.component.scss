@@ -15,6 +15,11 @@
         flex-direction: column;
         gap: 5px;
 
+
+        .logo_img {
+            margin-bottom: 30px;
+        }
+
         .join_input {
             padding: 5px;
             box-sizing: border-box;
@@ -50,8 +55,12 @@
 
         .main_video_section {
             flex: 1;
+
             overflow: hidden;
-            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: nowrap;
         }
 
 

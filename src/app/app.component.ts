@@ -1,4 +1,4 @@
-import { Component, ElementRef, Inject, PLATFORM_ID, ViewChild } from '@angular/core';
+import { Component, ElementRef, Inject, PLATFORM_ID, Renderer2, ViewChild } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { Socket } from 'ngx-socket-io';
@@ -69,7 +69,8 @@ export class AppComponent {
 
   constructor(
     @Inject(PLATFORM_ID) private _platform: Object,
-    private socket: Socket
+    private socket: Socket,
+    private renderer: Renderer2
   ) { }
 
   audioToggle() {
@@ -118,8 +119,8 @@ export class AppComponent {
     // this.getLocalStream()
 
     window.addEventListener('resize', (event: any) => {
-      // console.log(this.mainVideo.nativeElement.clientWidth)
-      const children: any = this.mainVideo.nativeElement.children[0];
+      // console.log(this.mainVideo.nativeElement.children[0].children[1])
+      const children: any = this.mainVideo.nativeElement.children[0].children[1];
 
       if (children) {
         children.width = 0;
@@ -145,9 +146,10 @@ export class AppComponent {
 
 
   goToMainVideo(e: any): void {
+    console.log(e.children[1])
     // console.log(e.target.clientWidth, e.target.clientHeight)
     // console.log(this.mainVideo.nativeElement.children[0])
-    const children: any = this.mainVideo.nativeElement.children[0];
+    const children: any = this.mainVideo.nativeElement.children[0].children[1];
     // 이미 main에 보여주고 있는 영상이 있으면
     if (children) {
       children.height = 120;
@@ -155,26 +157,26 @@ export class AppComponent {
       children.style.position = ''
       children.style.left = '';
       children.style.transform = '';
-      this.remoteVideosEl.nativeElement.appendChild(children);
+      this.remoteVideosEl.nativeElement.appendChild(this.mainVideo.nativeElement.children[0]);
     }
-    e.target.style.position = 'absolute';
-    e.target.style.left = '50%';
-    e.target.style.transform = 'translateX(-50%)';
+    // e.style.position = 'absolute';
+    // e.style.left = '50%';
+    // e.style.transform = 'translateX(-50%)';
 
-    e.target.height = this.mainVideo.nativeElement.clientHeight;
-    e.target.removeAttribute('width');
+    e.children[1].height = this.mainVideo.nativeElement.clientHeight;
+    e.children[1].removeAttribute('width');
 
 
 
-    if (e.target.clientWidth > this.mainVideo.nativeElement.clientWidth) {
-      e.target.width = this.mainVideo.nativeElement.clientWidth;
-      e.target.removeAttribute('height');
+    if (e.children[1].clientWidth > this.mainVideo.nativeElement.clientWidth) {
+      e.children[1].width = this.mainVideo.nativeElement.clientWidth;
+      e.children[1].removeAttribute('height');
     }
 
 
 
 
-    this.mainVideo.nativeElement.appendChild(e.target)
+    this.mainVideo.nativeElement.appendChild(e)
   }
 
   private initializeElements(): void {
@@ -314,7 +316,8 @@ export class AppComponent {
                 producerTransportId: this.producerTransport.id,
                 kind,
                 rtpParameters
-              }, ({ producer_id }: any) => {
+              }, ({ producer_id, name, type }: any) => {
+
                 callback({ id: producer_id })
               })
             } catch (err) {
@@ -422,8 +425,8 @@ export class AppComponent {
       'newProducers',
       async (data: any) => {
         console.log('Now Producers', data)
-        for (let { producer_id } of data) {
-          await this.consume(producer_id)
+        for (let { producer_id, producer_socket_id } of data) {
+          await this.consume(producer_id, producer_socket_id)
         }
       }
     )
@@ -436,46 +439,75 @@ export class AppComponent {
     )
   }
 
-  // consume 즉, 수신 설정
-  async consume(producer_id: any) {
 
-    this.getConsumeStream(producer_id).then(
-      ({ consumer, stream, kind }: any) => {
+  createVideoContainer(name: string) {
+    const video_container = document.createElement('div');
+    const name_elem = document.createElement('div');
+    video_container.style.position = 'relative';
+    video_container.style.overflow = 'hidden';
+    video_container.style.width = 'fit-content';
+
+    // console.log(name)
+    name_elem.innerText = name;
+    const nameStyle = name_elem.style;
+    nameStyle.position = 'absolute';
+    nameStyle.left = '3px';
+    nameStyle.bottom = '3px';
+    nameStyle.padding = '1px 3px';
+    nameStyle.borderRadius = '5px';
+    nameStyle.backgroundColor = 'rgba(0,0,0,0.5)'
+
+
+
+    video_container.appendChild(name_elem)
+
+    return video_container
+  }
+
+  // consume 즉, 수신 설정
+  async consume(producer_id: any, producer_socket_id: string) {
+
+    this.getConsumeStream(producer_id, producer_socket_id).then(
+      ({ consumer, stream, kind, name }: any) => {
         this.consumers.set(consumer.id, consumer)
 
-        let elem;
+        let elem: any;
         if (kind === 'video') {
+          console.log(name)
+          const video_container = this.createVideoContainer(name);
+
           elem = document.createElement('video');
           elem.srcObject = stream;
           elem.id = consumer.id;
           elem.playsInline = false;
           elem.autoplay = true;
-          elem.className = 'vid';
+          elem.className = `vid ${name}`;
           elem.height = 120;
           elem.style.borderRadius = '5px';
-
-          elem.onclick = (e) => { this.goToMainVideo(e) }
-
-          elem.ondblclick = (e) => { this.videoCapture(e) }
+          video_container.onclick = (e: any) => { this.goToMainVideo(video_container) }
+          video_container.ondblclick = (e: any) => { this.videoCapture(video_container) }
 
           const children: any = this.mainVideo.nativeElement.children[0];
 
           if (!children) {
-            elem.style.position = 'absolute';
-            elem.style.left = '50%';
-            elem.style.transform = 'translateX(-50%)';
-            elem.height = this.mainVideo.nativeElement.clientHeight;
-            elem.removeAttribute('width');
+            elem.addEventListener('resize', () => {
+              elem.height = this.mainVideo.nativeElement.clientHeight;
+              elem.removeAttribute('width');
+
+              if (elem.clientWidth > this.mainVideo.nativeElement.clientWidth) {
+                elem.width = this.mainVideo.nativeElement.clientWidth;
+                elem.removeAttribute('height');
+              }
 
 
+              elem.removeEventListener('resize', () => { console.log('제거') });
+            })
 
-            if (elem.clientWidth > this.mainVideo.nativeElement.clientWidth) {
-              elem.width = this.mainVideo.nativeElement.clientWidth;
-              elem.removeAttribute('height');
-            }
-            this.mainVideo.nativeElement.appendChild(elem);
+            video_container.appendChild(elem)
+            this.mainVideo.nativeElement.appendChild(video_container);
           } else {
-            this.remoteVideosEl.nativeElement.appendChild(elem);
+            video_container.appendChild(elem)
+            this.remoteVideosEl.nativeElement.appendChild(video_container);
           }
 
 
@@ -510,7 +542,7 @@ export class AppComponent {
 
 
 
-  async getConsumeStream(producerId: any) {
+  async getConsumeStream(producerId: any, producer_socket_id: string) {
     // 요구 조건 확인
     const { rtpCapabilities } = this.device;
     console.log(rtpCapabilities)
@@ -519,10 +551,11 @@ export class AppComponent {
       await this.socket.emit("consume", {
         rtpCapabilities,
         consumerTransportId: this.consumerTransport.id,
-        producerId
+        producerId,
+        producer_socket_id
       }, async (data: any) => {
         try {
-          const { id, kind, rtpParameters } = data;
+          const { id, kind, rtpParameters } = data.params;
 
           console.log(data)
           let codecOptions = {};
@@ -543,7 +576,8 @@ export class AppComponent {
           resolve({
             consumer,
             stream,
-            kind
+            kind,
+            name: data.name
           })
         } catch (error) {
           reject(error);
@@ -767,6 +801,9 @@ export class AppComponent {
       let elem: any;
       if (!audio) {
 
+        const video_container = this.createVideoContainer(this.nameInput.value);
+
+
         elem = document.createElement('video')
         elem.srcObject = stream
         elem.id = producer.id
@@ -776,26 +813,31 @@ export class AppComponent {
         elem.height = 120;
         elem.style.borderRadius = '5px';
 
-        elem.onclick = (e: any) => { this.goToMainVideo(e) }
-        elem.ondblclick = (e: any) => { this.videoCapture(e) }
+        video_container.onclick = (e: any) => { this.goToMainVideo(video_container) }
+        video_container.ondblclick = (e: any) => { this.videoCapture(elem) }
         const children: any = this.mainVideo.nativeElement.children[0];
 
         if (!children) {
-          elem.style.position = 'absolute';
-          elem.style.left = '50%';
-          elem.style.transform = 'translateX(-50%)';
-          elem.height = this.mainVideo.nativeElement.clientHeight;
-          elem.removeAttribute('width');
+          elem.addEventListener('resize', () => {
+            elem.height = this.mainVideo.nativeElement.clientHeight;
+            elem.removeAttribute('width');
+
+            if (elem.clientWidth > this.mainVideo.nativeElement.clientWidth) {
+              elem.width = this.mainVideo.nativeElement.clientWidth;
+              elem.removeAttribute('height');
+            }
 
 
+            elem.removeEventListener('resize', () => { console.log('제거') });
+          })
 
-          if (elem.clientWidth > this.mainVideo.nativeElement.clientWidth) {
-            elem.width = this.mainVideo.nativeElement.clientWidth;
-            elem.removeAttribute('height');
-          }
-          this.mainVideo.nativeElement.appendChild(elem);
+
+          video_container.appendChild(elem)
+          this.mainVideo.nativeElement.appendChild(video_container);
+
         } else {
-          this.remoteVideosEl.nativeElement.appendChild(elem)
+          video_container.appendChild(elem)
+          this.remoteVideosEl.nativeElement.appendChild(video_container)
         }
 
         this.handleFS(elem.id)
