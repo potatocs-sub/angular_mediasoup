@@ -452,7 +452,7 @@ export class AppComponent {
     const nameStyle = name_elem.style;
     nameStyle.position = 'absolute';
     nameStyle.left = '3px';
-    nameStyle.bottom = '3px';
+    nameStyle.bottom = '6px';
     nameStyle.padding = '1px 3px';
     nameStyle.borderRadius = '5px';
     nameStyle.backgroundColor = 'rgba(0,0,0,0.5)'
@@ -473,7 +473,7 @@ export class AppComponent {
 
         let elem: any;
         if (kind === 'video') {
-          console.log(name)
+          console.log(name, producer_socket_id)
           const video_container = this.createVideoContainer(name);
 
           elem = document.createElement('video');
@@ -481,7 +481,9 @@ export class AppComponent {
           elem.id = consumer.id;
           elem.playsInline = false;
           elem.autoplay = true;
-          elem.className = `vid ${name}`;
+          elem.style.boxSizing = 'border-box'
+          elem.style.border = '2px solid rgba(0,0,0,0)'
+          elem.className = `vid ${producer_socket_id}`;
           elem.height = 120;
           elem.style.borderRadius = '5px';
           video_container.onclick = (e: any) => { this.goToMainVideo(video_container) }
@@ -514,7 +516,7 @@ export class AppComponent {
 
           this.handleFS(elem.id)
         } else {
-
+          console.log(name, producer_socket_id)
           elem = document.createElement('audio')
           elem.srcObject = stream
           elem.id = consumer.id
@@ -541,6 +543,7 @@ export class AppComponent {
 
           let audioTime: any;
 
+          // console.log(video);
           // 소리 데시벨 모니터링
           function monitorDecibel() {
             // FFT 데이터 가져오기
@@ -555,15 +558,20 @@ export class AppComponent {
             let decibel = 20 * Math.log10(average / 255);
             // console.log(decibel)
             // 임계값 초과 시 콘솔에 로그 출력
+            // -20 데시벨
             if (decibel > -20) {
+              const video: any = document.getElementsByClassName(`${producer_socket_id}`)[0];
+              if (video) video.style.border = '2px solid rgba(255, 180, 18)'
+
               elem.play();
               if (audioTime) {
                 clearTimeout(audioTime)
               }
 
-              console.log(`${name}의 소리가 -20dB를 초과했습니다!`);
+              // console.log(`${name}의 소리가 -20dB를 초과했습니다!`);
 
               audioTime = setTimeout(() => {
+                if (video) video.style.border = '2px solid rgba(0,0,0,0)'
                 elem.pause();
               }, 3000);
             }
@@ -863,6 +871,8 @@ export class AppComponent {
         elem.playsInline = false
         elem.autoplay = true
         elem.className = 'vid'
+        elem.style.boxSizing = 'border-box'
+        elem.style.border = '2px solid rgba(0,0,0,0)'
         elem.height = 120;
         elem.style.borderRadius = '5px';
 
