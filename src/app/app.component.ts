@@ -767,7 +767,8 @@ export class AppComponent {
           el = this.videoOptions;
           nowValue = this.nowVideoValue;
         }
-        if (!el) return
+
+        if (el == null) return
 
         let option = document.createElement('option');
         option.value = device.deviceId
@@ -795,7 +796,6 @@ export class AppComponent {
 
 
 
-
   //====== MAIN FUNCTION
   async produce(type: any, deviceId: any = null) {
     let mediaConstraints = {};
@@ -816,20 +816,38 @@ export class AppComponent {
       case this.mediaType.video:
         this.isVideo = true;
         deviceId = this.nowVideoValue;
-        mediaConstraints = {
-          audio: false,
-          video: {
-            width: {
-              min: 640,
-              ideal: 1920
-            },
-            height: {
-              min: 400,
-              ideal: 1080
-            },
-            deviceId: deviceId
+        if (deviceId == '') {
+          mediaConstraints = {
+            audio: false,
+            video: {
+              width: {
+                min: 640,
+                ideal: 1920
+              },
+              height: {
+                min: 400,
+                ideal: 1080
+              },
+              deviceId: deviceId,
+            }
+          }
+        } else {
+          mediaConstraints = {
+            audio: false,
+            video: {
+              width: {
+                min: 640,
+                ideal: 1920
+              },
+              height: {
+                min: 400,
+                ideal: 1080
+              },
+              facingMode: { exact: "user" },
+            }
           }
         }
+
         break;
       case this.mediaType.screen:
         this.isScreen = true;
@@ -853,7 +871,7 @@ export class AppComponent {
 
     try {
       stream = screen ? await navigator.mediaDevices.getDisplayMedia() : await navigator.mediaDevices.getUserMedia(mediaConstraints)
-      console.log(navigator.mediaDevices.getSupportedConstraints())
+
 
       const track = audio ? stream.getAudioTracks()[0] : stream.getVideoTracks()[0]
       const params: any = {
