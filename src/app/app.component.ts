@@ -510,8 +510,9 @@ export class AppComponent {
           elem = document.createElement('video');
           elem.srcObject = stream;
           elem.id = consumer.id;
-          elem.playsInline = false;
+          elem.playsInline = true;
           elem.autoplay = true;
+          elem.muted = true;
 
           elem.style.boxSizing = 'border-box'
           elem.style.border = '2px solid rgba(0,0,0,0)'
@@ -901,8 +902,10 @@ export class AppComponent {
         elem = document.createElement('video')
         elem.srcObject = stream
         elem.id = producer.id
-        elem.playsInline = false
-        elem.autoplay = true
+        //https://velog.io/@huhyj97/html-video-%ED%83%9C%EA%B7%B8-%EB%AA%A8%EB%B0%94%EC%9D%BC-%EC%A0%84%EC%B2%B4%ED%99%94%EB%A9%B4-%EC%9D%B4%EC%8A%88feat.%EC%95%84%EC%9D%B4%ED%8F%B0
+        elem.playsInline = true;
+        elem.autoplay = true;
+        elem.muted = true;
         elem.className = 'vid'
         elem.style.boxSizing = 'border-box'
         elem.style.border = '2px solid rgba(0,0,0,0)'
