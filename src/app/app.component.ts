@@ -520,7 +520,7 @@ export class AppComponent {
           elem.style.borderRadius = '5px';
 
           video_container.onclick = (e: any) => { this.goToMainVideo(video_container) }
-          video_container.ondblclick = (e: any) => { this.videoCapture(video_container) }
+          video_container.ondblclick = (e: any) => { this.videoCapture(elem) }
 
           const children: any = this.mainVideo.nativeElement.children[0];
 

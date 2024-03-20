@@ -3,7 +3,7 @@ import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
 import { SocketIoConfig, SocketIoModule } from 'ngx-socket-io';
-const config: SocketIoConfig = { url: 'http://127.0.0.1:3000', options: { transports: ['websocket'], path: '/' } };
+const config: SocketIoConfig = { url: 'ws://localhost:3000/', options: { transports: ['websocket'], path: '/socket/' } };
 export const appConfig: ApplicationConfig = {
   providers: [importProvidersFrom(SocketIoModule.forRoot(config)), provideRouter(routes)]
 };
