@@ -117,7 +117,7 @@ export class AppComponent {
     this.initializeElements();
 
     // this.getLocalStream()
-    this.initEnumerateDevices()
+
     window.addEventListener('resize', (event: any) => {
       // console.log(this.mainVideo.nativeElement.children[0].children[1])
       const children: any = this.mainVideo.nativeElement.children[0].children[1];
@@ -192,25 +192,6 @@ export class AppComponent {
   }
 
 
-
-
-  //1. 클라이언트에 연결된 카메라, 오디오 등의 장치 데이터를 받아온다
-  getLocalStream = async () => {
-    if (isPlatformBrowser(this._platform) && 'mediaDevices' in navigator) {
-      // await navigator.mediaDevices.getUserMedia({
-      //   audio: true,
-      //   video: {
-      //     width: { min: 640, max: 1920 },
-      //     height: { min: 400, max: 1080 },
-      //     deviceId: this.videoSelect.value
-      //   },
-
-      // }).then(this.streamSuccess).catch((error) => {
-      //   console.log(error.message)
-      // })
-    }
-  }
-
   streamSuccess = (stream: any) => {
     // const localVideo: HTMLVideoElement = document.getElementById('localVideo') as HTMLVideoElement;
     // localVideo.srcObject = stream;
@@ -246,7 +227,7 @@ export class AppComponent {
         await this.socket.emit('join', { name, room_id }, async (response: any) => {
           this.joined = true;
           // console.log(response)
-          // this.initEnumerateDevices()
+          this.initEnumerateDevices()
           // console.log('join to room', response)
           // 통신을 위해 필요한 미디어 수준 정보 요청 
           await this.socket.emit('getRouterRtpCapabilities', {}, async (data: any) => {
