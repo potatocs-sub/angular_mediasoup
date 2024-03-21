@@ -154,7 +154,7 @@ export class AppComponent {
       return;
     }
 
-    const children: any = this.mainVideo.nativeElement.children[0].children[1];
+    const children: any = this.mainVideo.nativeElement?.children[0]?.children[1];
     // 이미 main에 보여주고 있는 영상이 있으면
     if (children) {
       children.height = 120;
@@ -402,6 +402,7 @@ export class AppComponent {
       'consumerClosed',
       ({ consumer_id }: any) => {
         console.log('Closing consumer:', consumer_id);
+
         this.removeConsumer(consumer_id)
       }
     )
@@ -699,7 +700,8 @@ export class AppComponent {
     tracks.forEach(function (track: any) {
       track.stop()
     })
-    elem.parentNode.removeChild(elem)
+    const parent = elem.parentNode;
+    parent.parentNode.removeChild(parent)
 
     this.consumers.delete(consumer_id)
   }
