@@ -117,7 +117,7 @@ export class AppComponent {
     this.initializeElements();
 
     // this.getLocalStream()
-
+    this.initEnumerateDevices()
     window.addEventListener('resize', (event: any) => {
       // console.log(this.mainVideo.nativeElement.children[0].children[1])
       const children: any = this.mainVideo.nativeElement.children[0].children[1];
@@ -246,7 +246,7 @@ export class AppComponent {
         await this.socket.emit('join', { name, room_id }, async (response: any) => {
           this.joined = true;
           // console.log(response)
-          this.initEnumerateDevices()
+          // this.initEnumerateDevices()
           // console.log('join to room', response)
           // 통신을 위해 필요한 미디어 수준 정보 요청 
           await this.socket.emit('getRouterRtpCapabilities', {}, async (data: any) => {
@@ -754,36 +754,76 @@ export class AppComponent {
   }
 
   enumerateDevices() {
-    navigator.mediaDevices.enumerateDevices().then((devices: any) => {
-      devices.forEach((device: any) => {
-        let el: any = null;
-        let nowValue: any = null;
-        if ('audioinput' === device.kind) {
-          // el = this.audioSelectEl?.nativeElement
-          el = this.audioOptions;
-          nowValue = this.nowAudioValue;
-        } else if ('videoinput' === device.kind) {
-          // el = this.videoSelectEl?.nativeElement
-          el = this.videoOptions;
-          nowValue = this.nowVideoValue;
-        }
+    if (isPlatformBrowser(this._platform) && 'mediaDevices' in navigator) {
+      // navigator.mediaDevices.getUserMedia({
+      //   audio: false,
+      //   video: {
+      //     width: {
+      //       min: 640,
+      //       ideal: 1920
+      //     },
+      //     height: {
+      //       min: 400,
+      //       ideal: 1080
+      //     },
+      //     facingMode: { exact: "user" },
+      //   }
+      // })
+      //   .then(stream => {
+      //     // 비디오 요소에 스트림을 연결합니다.
+      //     let elem: any;
+      //     if (stream) {
+      //       elem = document.createElement('video')
+      //       elem.srcObject = stream;
+      //       elem.style.backgroundColor = 'white';
+      //       elem.playsInline = true;
+      //       elem.autoplay = true;
+      //       elem.muted = true; elem.height = 120;
+      //       document.getElementsByClassName('cover_container')[0].appendChild(elem)
+      //     }
+      //   })
+      //   .catch(error => {
+      //     console.error('카메라 액세스 오류:', error);
+      //   });
+      navigator.mediaDevices.enumerateDevices().then((devices: any) => {
+        devices.forEach((device: any) => {
+          let el: any = null;
+          // let nowValue: any = null;
+          if ('audioinput' === device.kind) {
+            // el = this.audioSelectEl?.nativeElement
+            el = this.audioOptions;
 
-        if (el == null) return
+            if (!this.nowAudioValue) {
+              this.nowAudioValue = device.deviceId;
+            }
+          } else if ('videoinput' === device.kind) {
+            // el = this.videoSelectEl?.nativeElement
+            el = this.videoOptions;
+            // nowValue = this.nowVideoValue;
+            if (!this.nowVideoValue) {
+              this.nowVideoValue = device.deviceId;
+            }
+          }
 
-        let option = document.createElement('option');
-        option.value = device.deviceId
-        option.innerText = device.label
+          if (el == null) return
 
-        if (!nowValue) {
-          nowValue = device.deviceId;
-        }
+          let option = document.createElement('option');
+          option.value = device.deviceId
+          option.innerText = device.label
 
-        // el.appendChild(option)
-        el.push(option)
-        this.isEnumerateDevices = true
-      })
-      // console.log(this.videoOptions)
-    })
+          // if (!nowValue) {
+          //   nowValue = device.deviceId;
+          // }
+
+          // el.appendChild(option)
+          el.push(option)
+          this.isEnumerateDevices = true
+        })
+        // console.log(this.videoOptions)
+      }
+      )
+    }
+
 
   }
 
@@ -798,7 +838,7 @@ export class AppComponent {
 
   //====== MAIN FUNCTION
   async produce(type: any, deviceId: any = null) {
-    let mediaConstraints = {};
+    let mediaConstraints: any = {};
     let audio = false;
     let screen = false;
     switch (type) {
@@ -816,7 +856,7 @@ export class AppComponent {
       case this.mediaType.video:
         this.isVideo = true;
         deviceId = this.nowVideoValue;
-        if (deviceId == '') {
+        if (deviceId != '') {
           mediaConstraints = {
             audio: false,
             video: {
@@ -874,6 +914,7 @@ export class AppComponent {
 
 
       const track = audio ? stream.getAudioTracks()[0] : stream.getVideoTracks()[0]
+
       const params: any = {
         track
       }
@@ -892,14 +933,14 @@ export class AppComponent {
           },
           {
             rid: 'r2',
-            maxBitrate: 900000,
-            scalabilityMode: 'S2T3'
-          },
-          {
-            rid: 'r3',
             maxBitrate: 3600000,
             scalabilityMode: 'S2T3'
-          }
+          },
+          // {
+          //   rid: 'r3',
+          //   maxBitrate: 3600000,
+          //   scalabilityMode: 'S2T3'
+          // }
         ]
         params.codecOptions = {
           videoGoogleStartBitrate: 1000
@@ -907,7 +948,13 @@ export class AppComponent {
       }
 
 
-      let producer = await this.producerTransport.produce(params)
+
+      let producer: any = undefined
+      try {
+        producer = await this.producerTransport.produce(params)
+      } catch (err) {
+        window.alert(err)
+      }
 
       this.producers.set(producer.id, producer)
 
